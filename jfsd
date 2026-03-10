@@ -1,0 +1,115 @@
+
+package com.klef.fsad.exam.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity
+public class Payment
+{
+    @Id
+    private int paymentId;
+    private String name;
+    private String status;
+    private double amount;
+
+    public int getPaymentId() { return paymentId; }
+    public void setPaymentId(int paymentId) { this.paymentId = paymentId; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public double getAmount() { return amount; }
+    public void setAmount(double amount) { this.amount = amount; }
+}
+
+
+package com.klef.fsad.exam.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.klef.fsad.exam.model.Payment;
+
+public interface PaymentRepository extends JpaRepository<Payment,Integer>
+{
+
+}
+
+package com.klef.fsad.exam.service;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.klef.fsad.exam.model.Payment;
+import com.klef.fsad.exam.repository.PaymentRepository;
+
+@Service
+public class PaymentService
+{
+    @Autowired
+    PaymentRepository repo;
+
+    public Payment addPayment(Payment p)
+    {
+        return repo.save(p);
+    }
+
+    public List<Payment> getPayments()
+    {
+        return repo.findAll();
+    }
+}
+
+package com.klef.fsad.exam.controller;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import com.klef.fsad.exam.model.Payment;
+import com.klef.fsad.exam.service.PaymentService;
+
+@RestController
+@RequestMapping("/payment")
+public class PaymentController
+{
+    @Autowired
+    PaymentService service;
+
+    @PostMapping("/add")
+    public Payment add(@RequestBody Payment p)
+    {
+        return service.addPayment(p);
+    }
+
+    @GetMapping("/view")
+    public List<Payment> view()
+    {
+        return service.getPayments();
+    }
+}
+
+spring.datasource.url=jdbc:mysql://localhost:3306/fsadexam
+spring.datasource.username=root
+spring.datasource.password=root
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+6. POST Request (in Postman)
+URL
+Copy code
+
+http://localhost:8080/payment/add
+Body (JSON)
+Json
+Copy code
+{
+ "paymentId":1,
+ "name":"Sasank",
+ "status":"Success",
+ "amount":1000
+}
+
+
+http://localhost:8080/payment/view
